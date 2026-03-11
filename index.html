@@ -138,6 +138,12 @@
 const canvas = document.getElementById('c');
 const ctx = canvas.getContext('2d');
 let W, H;
+const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) || window.innerWidth < 768;
+const SHADOW = isMobile ? 0 : 22;
+const SHADOW_SMALL = isMobile ? 0 : 18;
+const PARTICLE_COUNT = isMobile ? 14 : 28;
+const BOLT_ROUGHNESS = isMobile ? 35 : 55;
+
 function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
 resize();
 window.addEventListener('resize', resize);
@@ -182,7 +188,7 @@ function spawnBolt(near) {
 let particles = [];
 function spawnParticles() {
   const cx = W / 2, cy = H / 2;
-  for (let i = 0; i < 28; i++) {
+  for (let i = 0; i < PARTICLE_COUNT; i++) {
     const angle = rand(0, Math.PI * 2);
     const dist = rand(180, Math.min(W, H) * 0.55);
     particles.push({
@@ -289,7 +295,7 @@ function draw() {
     ctx.beginPath();
     ctx.arc(px, py, p.size, 0, Math.PI * 2);
     ctx.fillStyle = p.color;
-    ctx.shadowBlur = 18;
+    ctx.shadowBlur = SHADOW_SMALL;
     ctx.shadowColor = '#00bfff';
     ctx.globalAlpha = 1 - p.t * 0.3;
     ctx.fill();
@@ -306,9 +312,9 @@ function draw() {
     ctx.globalAlpha = b.life;
     ctx.strokeStyle = b.life > 0.6 ? '#ffffff' : '#00cfff';
     ctx.lineWidth = b.life * 1.8;
-    ctx.shadowBlur = 22;
+    ctx.shadowBlur = SHADOW;
     ctx.shadowColor = '#00bfff';
-    drawBolt(b.x1, b.y1, b.x2, b.y2, 55, b.life);
+    drawBolt(b.x1, b.y1, b.x2, b.y2, BOLT_ROUGHNESS, b.life);
     ctx.shadowBlur = 0;
     b.life -= b.decay;
   });
